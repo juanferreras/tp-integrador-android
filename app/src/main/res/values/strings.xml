@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Pedime</string>
+
+    <string name="scan_barcode_button">Escaneá QR</string>
+    <string name="no_barcode_captured">No se escaneó nada</string>
+    <string name="barcode_error_format">"Error leyendo qr: %1$s"</string>
+
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Se necesita acceso a la cámara para escanear códigos QR.</string>
+    <string name="no_camera_permission">La aplicación no puede funcionar porque no tiene permisos. La aplicación se va a cerrar ahora.</string>
+    <string name="low_storage_error">No se pueden bajar las dependencias por poco espacio en disco.</string>
+</resources>
