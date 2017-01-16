@@ -12,11 +12,21 @@ import android.widget.TextView;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import dam.isi.frsf.utn.edu.ar.pedime.barcode.BarcodeCaptureActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
+
+    private final String API_URL = "http://pedime.herokuapp.com";
 
     private TextView mResultTextView;
 
@@ -44,10 +54,55 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
                     Point[] p = barcode.cornerPoints;
-                    mResultTextView.setText(barcode.displayValue);
+
+                    // buscamos el id de restaurante en la API
+                    // TODO: refactorizar esto a una clase async separada
+
+                    final String idRestaurante = barcode.displayValue;
+                    mResultTextView.setText(idRestaurante.toString());
+
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try  {
+                                JSONObject restauranteData = getRestaurante(idRestaurante);
+                                System.out.println(restauranteData.toString());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    thread.start();
+
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
         } else super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public JSONObject getRestaurante(String id) {
+        JSONObject restauranteData = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(API_URL + "/api/restaurantes/" + id);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            InputStreamReader isw = new InputStreamReader(in);
+            StringBuilder sb = new StringBuilder();
+
+            int data = isw.read();
+            while (data != -1) {
+                char current = (char) data;
+                sb.append(current);
+                data = isw.read();
+            }
+            restauranteData = new JSONObject(sb.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) urlConnection.disconnect();
+        }
+        return restauranteData;
     }
 }
