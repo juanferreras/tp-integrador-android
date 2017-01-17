@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -20,9 +21,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import dam.isi.frsf.utn.edu.ar.pedime.Restaurante.RestauranteActivity;
 import dam.isi.frsf.utn.edu.ar.pedime.barcode.BarcodeCaptureActivity;
+import dam.isi.frsf.utn.edu.ar.pedime.model.Restaurante;
+import dam.isi.frsf.utn.edu.ar.pedime.services.BuscarRestauranteTask;
+import dam.isi.frsf.utn.edu.ar.pedime.utils.BusquedaRestauranteListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BusquedaRestauranteListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
 
@@ -56,23 +61,15 @@ public class MainActivity extends AppCompatActivity {
                     Point[] p = barcode.cornerPoints;
 
                     // buscamos el id de restaurante en la API
-                    // TODO: refactorizar esto a una clase async separada
 
                     final String idRestaurante = barcode.displayValue;
-                    mResultTextView.setText(idRestaurante.toString());
+                    mResultTextView.setText(R.string.buscando_restaurante);
 
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try  {
-                                JSONObject restauranteData = getRestaurante(idRestaurante);
-                                System.out.println(restauranteData.toString());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                    thread.start();
+
+                    new BuscarRestauranteTask(this).execute(idRestaurante);
+                    
+
+
 
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
@@ -80,29 +77,17 @@ public class MainActivity extends AppCompatActivity {
         } else super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public JSONObject getRestaurante(String id) {
-        JSONObject restauranteData = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(API_URL + "/api/restaurantes/" + id);
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            InputStreamReader isw = new InputStreamReader(in);
-            StringBuilder sb = new StringBuilder();
-
-            int data = isw.read();
-            while (data != -1) {
-                char current = (char) data;
-                sb.append(current);
-                data = isw.read();
-            }
-            restauranteData = new JSONObject(sb.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (urlConnection != null) urlConnection.disconnect();
+    @Override
+    public void OnResultadoRestauranteListener(Restaurante restaurante) {
+        if(restaurante == null)
+            Toast.makeText(this, "No se encontró el restaurante.", Toast.LENGTH_SHORT).show();
+        else{
+            Log.i("RESTAURANTE: ", restaurante.toString());
+            Toast.makeText(this, "Restaurante encontrado.", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, RestauranteActivity.class);
+            i.putExtra("restaurante", restaurante);
+            startActivity(i);
         }
-        return restauranteData;
     }
+
 }

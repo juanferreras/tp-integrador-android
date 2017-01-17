@@ -9,4 +9,8 @@
     <string name="permission_camera_rationale">Se necesita acceso a la cámara para escanear códigos QR.</string>
     <string name="no_camera_permission">La aplicación no puede funcionar porque no tiene permisos. La aplicación se va a cerrar ahora.</string>
     <string name="low_storage_error">No se pueden bajar las dependencias por poco espacio en disco.</string>
+    <string name="buscando_restaurante">Buscando restaurante...</string>
+    <string name="llamar_mozo">LLAMAR MOZO</string>
+    <string name="pedir">PEDIR - $</string>
+    <string name="agregar_al_pedido"><![CDATA[AGREGAR AL PEDIDO >]]></string>
 </resources>

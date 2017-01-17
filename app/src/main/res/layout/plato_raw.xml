@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:background="#fff">
+
+        <TextView
+            android:text="Medallones de pollo con Papas Fritas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/plato_title"
+            android:textStyle="normal|bold"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:text="Lorem ipsum dolor sit amet, pulp universidad tecnológica nacional facultad regional santa Fe."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/plato_descripcion" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:id="@+id/imagen_plato"
+        android:adjustViewBounds="true"
+        tools:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_height="120dp"
+        tools:src="@drawable/bg" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_precio"
+            android:layout_weight="1"
+            android:textColor="#ffff"
+            android:layout_marginLeft="15dp"
+            android:text="" />
+
+        <Button
+            android:text="@string/agregar_al_pedido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_agregar_pedido"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:textColor="#fff" />
+    </LinearLayout>
+</LinearLayout>
