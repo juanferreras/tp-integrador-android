@@ -18,6 +18,7 @@ import dam.isi.frsf.utn.edu.ar.pedime.R;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Plato;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Restaurante;
 import dam.isi.frsf.utn.edu.ar.pedime.services.DownloadImageTask;
+import dam.isi.frsf.utn.edu.ar.pedime.utils.PlatoAccionadoListener;
 
 /**
  * Created by arielkohan on 1/17/17.
@@ -30,13 +31,19 @@ public class PlatosAdapter extends BaseAdapter {
     private String API_URL = "http://pedime.herokuapp.com";
     private static LayoutInflater inflater = null;
 
-    NumberFormat formatter = new DecimalFormat("#0.00");
+    private PlatoAccionadoListener listener;
+
+    private final NumberFormat formatter = new DecimalFormat("#0.00");
 
 
     public PlatosAdapter(Context context, List<Plato> data) {
         this.context = context;
         this.data = data;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setPlatoAccionadoListener(PlatoAccionadoListener listener){
+        this.listener = listener;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class PlatosAdapter extends BaseAdapter {
         if(data.size() <= 0 )
             holder.textViewPlatoNombre.setText("NO DATA"); //TODO: refactorizar y poner en la actividad un textview con algun comentario si no hay datos
         else {
-            Plato plato = data.get(position);
+            final Plato plato = data.get(position);
 
             holder.textViewPlatoNombre.setText(plato.getNombre());
             holder.textViewPlatoDescripcion.setText(plato.getDescripcion());
@@ -90,9 +97,13 @@ public class PlatosAdapter extends BaseAdapter {
             holder.buttonAgregarAPedido.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO: Agregar el pedido
-
-                    Toast.makeText(context, "Plato seleccionado para agregar", Toast.LENGTH_SHORT).show();
+                if(listener.platoAgregado(plato)){
+                    listener.onPlatoRemovidoListener(plato);
+                    ((Button)view).setText(R.string.agregar_al_pedido);
+                } else {
+                    listener.onPlatoAgregadoListener(plato);
+                    ((Button)view).setText(R.string.sacar_pedido);
+                }
                 }
             });
 

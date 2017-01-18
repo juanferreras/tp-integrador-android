@@ -52,4 +52,14 @@ public class Plato  implements Serializable{
     public void setPrecio(Double precio) {
         this.precio = precio;
     }
+
+
+    public boolean Equals(Plato p){
+        return (this == null) ? p == null :
+                (
+                        (this.getNombre().compareTo(p.getNombre()) == 0) &&
+                        (this.getFoto().compareTo(p.getFoto()) == 0) &&
+                        (this.getDescripcion().compareTo(p.getDescripcion()) == 0) &&
+                        (this.getPrecio().compareTo(p.getPrecio()) == 0) );
+    }
 }

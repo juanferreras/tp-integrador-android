@@ -11,6 +11,7 @@
     <string name="low_storage_error">No se pueden bajar las dependencias por poco espacio en disco.</string>
     <string name="buscando_restaurante">Buscando restaurante...</string>
     <string name="llamar_mozo">LLAMAR MOZO</string>
-    <string name="pedir">PEDIR - $</string>
+    <string name="pedir">PEDIR</string>
     <string name="agregar_al_pedido"><![CDATA[AGREGAR AL PEDIDO >]]></string>
+    <string name="sacar_pedido">X Sacar del pedido</string>
 </resources>
