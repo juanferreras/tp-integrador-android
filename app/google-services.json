@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "820660341633",
+    "firebase_url": "https://tp-integrador-android-865f9.firebaseio.com",
+    "project_id": "tp-integrador-android-865f9",
+    "storage_bucket": "tp-integrador-android-865f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820660341633:android:fb708974a8fa0a8f",
+        "android_client_info": {
+          "package_name": "dam.isi.frsf.utn.edu.ar.pedime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820660341633-vi3tehoob1pr8b20v6p1mc30mo4cpcv8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8g7DzKYOBHH28qLVDXtc0RxtKOwGQc5I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

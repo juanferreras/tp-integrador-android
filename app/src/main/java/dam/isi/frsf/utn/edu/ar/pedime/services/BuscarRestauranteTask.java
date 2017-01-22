@@ -47,6 +47,10 @@ public class BuscarRestauranteTask extends AsyncTask<String, Integer, Restaurant
         String idRestaurante = args[0];
 
         JSONObject restauranteData = getRestaurante(idRestaurante);
+
+        if(restauranteData == null){
+            return null;
+        }
         restauranteResultado = parseJSONToRestaurante(restauranteData);
 
         return restauranteResultado;

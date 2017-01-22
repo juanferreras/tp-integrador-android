@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
                 startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
             }
         });
+
+        mResultTextView.setText(R.string.no_barcode_captured);
     }
 
     @Override
@@ -65,11 +67,7 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
                     final String idRestaurante = barcode.displayValue;
                     mResultTextView.setText(R.string.buscando_restaurante);
 
-
                     new BuscarRestauranteTask(this).execute(idRestaurante);
-                    
-
-
 
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
@@ -79,9 +77,10 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
 
     @Override
     public void OnResultadoRestauranteListener(Restaurante restaurante) {
-        if(restaurante == null)
+        if(restaurante == null) {
             Toast.makeText(this, "No se encontró el restaurante.", Toast.LENGTH_SHORT).show();
-        else{
+            mResultTextView.setText(R.string.no_barcode_captured);
+        } else{
             Log.i("RESTAURANTE: ", restaurante.toString());
             Toast.makeText(this, "Restaurante encontrado.", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, RestauranteActivity.class);
