@@ -1,46 +1,46 @@
 package dam.isi.frsf.utn.edu.ar.pedime.Restaurante;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.util.Map;
 
 import dam.isi.frsf.utn.edu.ar.pedime.R;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Plato;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Restaurante;
-import dam.isi.frsf.utn.edu.ar.pedime.utils.FirebaseInstanceService;
+import dam.isi.frsf.utn.edu.ar.pedime.utils.Constantes;
 import dam.isi.frsf.utn.edu.ar.pedime.utils.PlatoAccionadoListener;
-import dam.isi.frsf.utn.edu.ar.pedime.utils.RestClient;
 
 public class RestauranteActivity extends AppCompatActivity implements PlatoAccionadoListener,View.OnClickListener{
-
-    //TODO: ver donde poner esta constante.
-    private final String API_URL = "http://pedime.herokuapp.com";
 
     private ListView listViewPlatos;
     private Button buttonPedir;
     private Button buttonLlamarMozo;
 
+    private String idMesa;
     private Restaurante restaurante;
     private PlatosAdapter adapter;
 
@@ -57,6 +57,7 @@ public class RestauranteActivity extends AppCompatActivity implements PlatoAccio
         Intent i = getIntent();
 
         restaurante = (Restaurante) i.getSerializableExtra("restaurante");
+        idMesa = (String) i.getSerializableExtra("idMesa");
 
         listViewPlatos = (ListView) findViewById(R.id.listview_platos);
         buttonPedir = (Button) findViewById(R.id.button_pedir_comida);
@@ -99,13 +100,16 @@ public class RestauranteActivity extends AppCompatActivity implements PlatoAccio
 
 
     private void actualizarBotonPedido() {
+        buttonPedir.setText(getString(R.string.pedir) + " - $" + getPrecioFinal().toString());
+    }
+
+    private Double getPrecioFinal(){
         Double precioFinal = 0.0;
         for(Plato p: pedido){
             precioFinal += p.getPrecio();
         }
-        buttonPedir.setText(getString(R.string.pedir) + " - $" + precioFinal.toString());
+        return precioFinal;
     }
-
 
     @Override
     public void onClick(View view) {
@@ -125,30 +129,26 @@ public class RestauranteActivity extends AppCompatActivity implements PlatoAccio
     private void realizarPedido(){
         if(pedido == null || pedido.isEmpty())
             Toast.makeText(this, "El pedido no tiene ningun plato. Por favor seleccione uno.", Toast.LENGTH_SHORT).show();
+        else  if (restaurante.get_id() == null)
+            Toast.makeText(this, "Ha ocurrido un problema con su pedido. Por favor llame al mozo.", Toast.LENGTH_SHORT).show();
         else {
-            if (restaurante.get_id() == null)
-                Toast.makeText(this, "Ha ocurrido un problema con su pedido. Por favor llame al mozo.", Toast.LENGTH_SHORT).show();
-            else {
                 HttpURLConnection urlConnection = null;
                 try {
-                    JSONObject objeto = new JSONObject();
-                    Double precioFinal = 0.0;
-                    for (Plato p : pedido) {
-                        precioFinal += p.getPrecio();
-                    }
 
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     String token = preferences.getString("registration_id", null);
 
-                    objeto.put("precioTotal", precioFinal);
-                    objeto.put("platos", pedido);
-                    objeto.put("token", token);
-                    objeto.put("mesa", 1);
+                    Gson gson = new Gson();
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("precioTotal", getPrecioFinal());
+                    map.put("platos", pedido);
+                    map.put("token", token);
+                    map.put("mesa", idMesa);
 
-                    String str = objeto.toString();
+                    String str = gson.toJson(map);
                     byte[] datosAEnviar = str.getBytes("UTF-8");
 
-                    URL url = new URL(API_URL + "/api/restaurantes/" + restaurante.get_id() + "/pedidos");
+                    URL url = new URL(Constantes.API_URL + "/api/restaurantes/" + restaurante.get_id() + "/pedidos");
 
                     urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setDoOutput(true);
@@ -168,9 +168,7 @@ public class RestauranteActivity extends AppCompatActivity implements PlatoAccio
                     while ((chr = in.read()) != -1) {
                         sb.append((char) chr);
                     }
-                    reply = sb.toString();
-
-
+                    Log.i("Respuesta pedido: ", sb.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -179,6 +177,5 @@ public class RestauranteActivity extends AppCompatActivity implements PlatoAccio
 
                 Toast.makeText(this, "Su pedido llegará a su mesa en cualquier instante.", Toast.LENGTH_SHORT).show();
             }
-        }
         }
 }

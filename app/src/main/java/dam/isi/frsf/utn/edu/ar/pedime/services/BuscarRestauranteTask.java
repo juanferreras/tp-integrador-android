@@ -18,6 +18,7 @@ import java.util.List;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Plato;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Restaurante;
 import dam.isi.frsf.utn.edu.ar.pedime.utils.BusquedaRestauranteListener;
+import dam.isi.frsf.utn.edu.ar.pedime.utils.Constantes;
 
 /**
  * Created by arielkohan on 1/17/17.
@@ -25,12 +26,7 @@ import dam.isi.frsf.utn.edu.ar.pedime.utils.BusquedaRestauranteListener;
 
 public class BuscarRestauranteTask extends AsyncTask<String, Integer, Restaurante> {
 
-    //TODO: ver donde poner esta constante.
-    private final String API_URL = "http://pedime.herokuapp.com";
-
     private BusquedaRestauranteListener listener;
-
-
     public BuscarRestauranteTask(BusquedaRestauranteListener listener) {
         this.listener = listener;
     }
@@ -95,7 +91,7 @@ public class BuscarRestauranteTask extends AsyncTask<String, Integer, Restaurant
         JSONObject restauranteData = null;
         HttpURLConnection urlConnection = null;
         try {
-            URL url = new URL(API_URL + "/api/restaurantes/" + id);
+            URL url = new URL(Constantes.API_URL + "/api/restaurantes/" + id);
 
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());

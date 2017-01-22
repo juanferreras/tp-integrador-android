@@ -1,5 +1,7 @@
 package dam.isi.frsf.utn.edu.ar.pedime;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
@@ -31,16 +33,21 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int BARCODE_READER_REQUEST_CODE = 1;
 
-    private final String API_URL = "http://pedime.herokuapp.com";
-
     private TextView mResultTextView;
+
+    private String idMesa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        NotificationManager notifManager= (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        notifManager.cancelAll();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mResultTextView = (TextView) findViewById(R.id.result_textview);
+        mResultTextView.setText(R.string.no_barcode_captured);
 
         Button scanBarcodeButton = (Button) findViewById(R.id.scan_barcode_button);
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
             }
         });
 
-        mResultTextView.setText(R.string.no_barcode_captured);
     }
 
     @Override
@@ -63,12 +69,15 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
                     Point[] p = barcode.cornerPoints;
 
                     // buscamos el id de restaurante en la API
-
-                    final String idRestaurante = barcode.displayValue;
-                    mResultTextView.setText(R.string.buscando_restaurante);
-
-                    new BuscarRestauranteTask(this).execute(idRestaurante);
-
+                    try {
+                        final String idRestaurante = barcode.displayValue.split("\\|")[0];
+                        idMesa = barcode.displayValue.split("\\|")[1];
+                        new BuscarRestauranteTask(this).execute(idRestaurante);
+                        mResultTextView.setText(R.string.buscando_restaurante);
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Ocurrio un error al leer el código QR.", Toast.LENGTH_SHORT).show();
+                        mResultTextView.setText(R.string.no_barcode_captured);
+                    }
                 } else mResultTextView.setText(R.string.no_barcode_captured);
             } else Log.e(LOG_TAG, String.format(getString(R.string.barcode_error_format),
                     CommonStatusCodes.getStatusCodeString(resultCode)));
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements BusquedaRestauran
             Toast.makeText(this, "Restaurante encontrado.", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, RestauranteActivity.class);
             i.putExtra("restaurante", restaurante);
+            i.putExtra("idMesa", idMesa);
             startActivity(i);
         }
     }

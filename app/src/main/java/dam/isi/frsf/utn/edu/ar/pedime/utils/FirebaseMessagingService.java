@@ -28,10 +28,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
                         .setContentTitle(title)
                         .setContentText(texto);
 
-        Intent resultIntent = new Intent(this, RestauranteActivity.class);
+        Intent resultIntent = new Intent(this, MainActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(RestauranteActivity.class);
+        stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(

@@ -18,6 +18,7 @@ import dam.isi.frsf.utn.edu.ar.pedime.R;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Plato;
 import dam.isi.frsf.utn.edu.ar.pedime.model.Restaurante;
 import dam.isi.frsf.utn.edu.ar.pedime.services.DownloadImageTask;
+import dam.isi.frsf.utn.edu.ar.pedime.utils.Constantes;
 import dam.isi.frsf.utn.edu.ar.pedime.utils.PlatoAccionadoListener;
 
 /**
@@ -28,7 +29,6 @@ public class PlatosAdapter extends BaseAdapter {
 
     private Context context;
     private List<Plato> data;
-    private String API_URL = "http://pedime.herokuapp.com";
     private static LayoutInflater inflater = null;
 
     private PlatoAccionadoListener listener;
@@ -108,7 +108,7 @@ public class PlatosAdapter extends BaseAdapter {
             });
 
             new DownloadImageTask(holder.imageViewPlato)
-                    .execute(API_URL + plato.getFoto());
+                    .execute(Constantes.API_URL + plato.getFoto());
         }
 
         return vi;
